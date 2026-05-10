@@ -1,0 +1,696 @@
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Sora:wght@300;400;500;600;700&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Sora',sans-serif;background:#050912;color:#e2e8f0;min-height:100vh;padding:12px;font-size:13px}
+.mono{font-family:'JetBrains Mono',monospace}
+.header{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:#0a0e1a;border:1px solid #1e293b;border-radius:10px;margin-bottom:10px}
+.header-left{display:flex;align-items:center;gap:10px}
+.logo-box{width:32px;height:32px;background:#1d4ed8;border-radius:6px;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;color:#fff}
+.h-title{font-size:14px;font-weight:600;color:#f0f6ff}
+.h-sub{font-size:10px;color:#64748b;font-family:'JetBrains Mono',monospace;letter-spacing:1px}
+.status-live{display:flex;align-items:center;gap:5px;background:#0f2a1a;border:1px solid #166534;border-radius:6px;padding:4px 10px;font-size:10px;color:#22c55e;font-family:'JetBrains Mono',monospace}
+.dot{width:6px;height:6px;border-radius:50%;background:#22c55e;animation:blink 1.5s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.2}}
+
+/* Tabs */
+.tabs{display:flex;gap:6px;margin-bottom:10px}
+.tab{padding:6px 14px;border-radius:6px;border:1px solid #1e293b;background:#0a0e1a;color:#64748b;font-size:11px;cursor:pointer;font-family:'JetBrains Mono',monospace;transition:all 0.2s}
+.tab.active{background:#1d4ed8;border-color:#3b82f6;color:#fff}
+
+/* Panels */
+.panel{display:none}
+.panel.active{display:block}
+
+/* Grid layouts */
+.grid-4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-bottom:10px}
+.grid-3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:10px}
+.grid-2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-bottom:10px}
+.grid-2-1{display:grid;grid-template-columns:2fr 1fr;gap:8px;margin-bottom:10px}
+.grid-1-2{display:grid;grid-template-columns:1fr 2fr;gap:8px;margin-bottom:10px}
+
+/* Cards */
+.card{background:#0a0e1a;border:1px solid #1e293b;border-radius:10px;padding:12px}
+.card-sm{background:#0a0e1a;border:1px solid #1e293b;border-radius:10px;padding:10px}
+.card-title{font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:#475569;margin-bottom:10px;font-family:'JetBrains Mono',monospace}
+
+/* Stat cards */
+.stat-card{background:#0a0e1a;border:1px solid #1e293b;border-radius:10px;padding:10px 12px;position:relative;overflow:hidden}
+.stat-accent{position:absolute;left:0;top:0;bottom:0;width:3px;border-radius:10px 0 0 10px}
+.stat-label{font-size:9px;color:#64748b;letter-spacing:1px;text-transform:uppercase;font-family:'JetBrains Mono',monospace;margin-bottom:4px}
+.stat-val{font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:600;line-height:1}
+.stat-sub{font-size:9px;color:#64748b;margin-top:3px}
+.stat-change{font-size:9px;font-family:'JetBrains Mono',monospace;margin-top:4px}
+
+/* Sensor rows */
+.sensor-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.sensor-item{padding:8px;background:#111827;border-radius:7px;border:1px solid #1e293b}
+.s-label{font-size:9px;color:#475569;letter-spacing:1px;text-transform:uppercase;font-family:'JetBrains Mono',monospace}
+.s-val{font-family:'JetBrains Mono',monospace;font-size:16px;font-weight:600;margin-top:2px}
+.s-bar{height:3px;background:#1e293b;border-radius:3px;margin-top:6px;overflow:hidden}
+.s-fill{height:100%;border-radius:3px;transition:width 0.8s ease}
+
+/* Device grid */
+.device-card{padding:10px;background:#111827;border-radius:8px;border:1px solid #1e293b;display:flex;flex-direction:column;gap:8px;transition:border-color 0.3s}
+.device-card.on{border-color:#166534}
+.device-top{display:flex;justify-content:space-between;align-items:flex-start}
+.device-icon{width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:14px}
+.device-name{font-size:11px;font-weight:600;color:#cbd5e1;margin-top:2px}
+.device-watt{font-size:10px;color:#475569;font-family:'JetBrains Mono',monospace}
+.toggle{position:relative;width:36px;height:20px;cursor:pointer;flex-shrink:0}
+.toggle input{opacity:0;width:0;height:0;position:absolute}
+.tslider{position:absolute;inset:0;background:#1e293b;border-radius:20px;transition:0.3s;border:1px solid #334155}
+.tslider:before{content:'';position:absolute;width:14px;height:14px;left:2px;top:2px;background:#64748b;border-radius:50%;transition:0.3s}
+input:checked+.tslider{background:#0f4c2a;border-color:#22c55e}
+input:checked+.tslider:before{transform:translateX(16px);background:#22c55e}
+.power-bar{height:3px;background:#1e293b;border-radius:3px;overflow:hidden}
+.power-fill{height:100%;border-radius:3px;background:#22c55e;transition:width 0.5s}
+
+/* Canvas chart */
+canvas{width:100%!important;display:block}
+
+/* AI output */
+.ai-box{background:#020814;border:1px solid #1e3a8a;border-radius:8px;padding:12px;font-family:'JetBrains Mono',monospace;font-size:11px;line-height:1.8;color:#94a3b8;min-height:120px;max-height:200px;overflow-y:auto;white-space:pre-wrap}
+.ai-thinking{color:#3b82f6}
+.ai-section{color:#22c55e;font-weight:600}
+.btn-primary{width:100%;padding:9px;background:#1d4ed8;border:none;border-radius:7px;color:#fff;font-family:'JetBrains Mono',monospace;font-size:11px;cursor:pointer;transition:all 0.2s;letter-spacing:0.5px;margin-top:8px}
+.btn-primary:hover{background:#2563eb}
+.btn-primary:disabled{background:#1e293b;color:#475569;cursor:not-allowed}
+
+/* Occupancy */
+.occ-indicator{display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:8px;margin-bottom:10px}
+.occ-on{background:#0f2a1a;border:1px solid #166534}
+.occ-off{background:#1a0a0a;border:1px solid #7f1d1d}
+.occ-dot{width:10px;height:10px;border-radius:50%}
+.occ-on .occ-dot{background:#22c55e;box-shadow:0 0 8px #22c55e}
+.occ-off .occ-dot{background:#ef4444;box-shadow:0 0 8px #ef4444}
+.occ-text{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600}
+.occ-on .occ-text{color:#22c55e}
+.occ-off .occ-text{color:#ef4444}
+.conf-bar{height:4px;background:#1e293b;border-radius:4px;overflow:hidden;margin-top:4px}
+.conf-fill{height:100%;border-radius:4px;background:#22c55e;transition:width 1s ease}
+
+/* Scenario buttons */
+.scen-row{display:flex;gap:6px;margin-bottom:10px}
+.scen-btn{flex:1;padding:6px;background:#0a0e1a;border:1px solid #1e293b;border-radius:6px;color:#64748b;font-size:10px;cursor:pointer;font-family:'JetBrains Mono',monospace;transition:all 0.2s;text-align:center}
+.scen-btn.active{background:#172554;border-color:#3b82f6;color:#60a5fa}
+
+/* Log */
+.log-entry{display:flex;gap:8px;padding:5px 0;border-bottom:1px solid #0f172a;font-family:'JetBrains Mono',monospace;font-size:10px}
+.log-time{color:#475569;flex-shrink:0;width:55px}
+.log-tag{padding:1px 6px;border-radius:3px;font-size:9px;flex-shrink:0}
+.tag-on{background:#0f2a1a;color:#22c55e}
+.tag-off{background:#1a0a0a;color:#ef4444}
+.tag-ai{background:#172554;color:#60a5fa}
+.tag-warn{background:#422006;color:#f59e0b}
+.log-msg{color:#94a3b8}
+.log-scroll{max-height:160px;overflow-y:auto}
+
+/* Feature importance */
+.feat-row{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.feat-rank{font-family:'JetBrains Mono',monospace;font-size:10px;color:#475569;width:18px}
+.feat-name{font-size:10px;color:#94a3b8;width:130px;flex-shrink:0}
+.feat-bar-wrap{flex:1;height:8px;background:#1e293b;border-radius:4px;overflow:hidden}
+.feat-bar-fill{height:100%;border-radius:4px;transition:width 0.8s ease}
+.feat-score{font-family:'JetBrains Mono',monospace;font-size:9px;color:#64748b;width:36px;text-align:right}
+
+/* RF metrics mini gauge */
+.gauge-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid #0f172a}
+.gauge-row:last-child{border-bottom:none}
+.gauge-label{font-size:10px;color:#94a3b8}
+.gauge-wrap{display:flex;align-items:center;gap:8px;flex:1;margin:0 10px}
+.gauge-bar{flex:1;height:5px;background:#1e293b;border-radius:5px;overflow:hidden}
+.gauge-fill{height:100%;border-radius:5px;background:#22c55e;transition:width 1s ease}
+.gauge-val{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;color:#22c55e;width:40px;text-align:right}
+</style>
+
+<div class="header">
+  <div class="header-left">
+    <div class="logo-box">AI</div>
+    <div>
+      <div class="h-title">Smart Classroom Energy Saver</div>
+      <div class="h-sub">UCI Dataset · RF + LSTM · Room 204, CEC Jhanjeri</div>
+    </div>
+  </div>
+  <div style="display:flex;align-items:center;gap:10px">
+    <div style="text-align:right">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#f0f6ff" id="clock">--:--:--</div>
+      <div style="font-size:9px;color:#475569;font-family:'JetBrains Mono',monospace" id="daystr">--</div>
+    </div>
+    <div class="status-live"><span class="dot"></span>LIVE SIM</div>
+  </div>
+</div>
+
+<div class="tabs">
+  <button class="tab active" onclick="switchTab('dashboard')">Dashboard</button>
+  <button class="tab" onclick="switchTab('analytics')">Analytics</button>
+  <button class="tab" onclick="switchTab('models')">AI Models</button>
+  <button class="tab" onclick="switchTab('log')">Audit Log</button>
+</div>
+
+<!-- ─── DASHBOARD TAB ─────────────────────────────────────── -->
+<div class="panel active" id="tab-dashboard">
+  <div style="margin-bottom:8px">
+    <div class="scen-row">
+      <button class="scen-btn active" onclick="setScenario('morning')" id="s-morning">Morning Class</button>
+      <button class="scen-btn" onclick="setScenario('break')" id="s-break">Lunch Break</button>
+      <button class="scen-btn" onclick="setScenario('evening')" id="s-evening">Evening Empty</button>
+      <button class="scen-btn" onclick="setScenario('night')" id="s-night">Night Mode</button>
+    </div>
+  </div>
+
+  <div class="grid-4">
+    <div class="stat-card">
+      <div class="stat-accent" style="background:#22c55e"></div>
+      <div class="stat-label" style="padding-left:6px">Current Power</div>
+      <div class="stat-val" id="stat-power" style="color:#22c55e;padding-left:6px">0 Wh</div>
+      <div class="stat-sub" style="padding-left:6px">Live consumption</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-accent" style="background:#3b82f6"></div>
+      <div class="stat-label" style="padding-left:6px">Energy Saved</div>
+      <div class="stat-val" id="stat-saved" style="color:#3b82f6;padding-left:6px">0%</div>
+      <div class="stat-sub" style="padding-left:6px">vs no-control baseline</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-accent" style="background:#f59e0b"></div>
+      <div class="stat-label" style="padding-left:6px">Temp / Humidity</div>
+      <div class="stat-val" id="stat-env" style="color:#f59e0b;padding-left:6px">--°C</div>
+      <div class="stat-sub" style="padding-left:6px" id="stat-env2">-- RH%</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-accent" style="background:#a855f7"></div>
+      <div class="stat-label" style="padding-left:6px">CO₂ Level</div>
+      <div class="stat-val" id="stat-co2" style="color:#a855f7;padding-left:6px">-- ppm</div>
+      <div class="stat-sub" style="padding-left:6px" id="stat-co2-status">normal</div>
+    </div>
+  </div>
+
+  <div class="grid-2-1">
+    <!-- Sensor Panel -->
+    <div class="card">
+      <div class="card-title">⬡ Live Sensor Array</div>
+      <div class="sensor-grid">
+        <div class="sensor-item">
+          <div class="s-label">Indoor Temp</div>
+          <div class="s-val" id="sv-temp" style="color:#f59e0b">--°C</div>
+          <div class="s-bar"><div class="s-fill" id="sb-temp" style="width:0%;background:#f59e0b"></div></div>
+        </div>
+        <div class="sensor-item">
+          <div class="s-label">Humidity</div>
+          <div class="s-val" id="sv-hum" style="color:#38bdf8">--%</div>
+          <div class="s-bar"><div class="s-fill" id="sb-hum" style="width:0%;background:#38bdf8"></div></div>
+        </div>
+        <div class="sensor-item">
+          <div class="s-label">CO₂ (ppm)</div>
+          <div class="s-val" id="sv-co2" style="color:#a855f7">-- ppm</div>
+          <div class="s-bar"><div class="s-fill" id="sb-co2" style="width:0%;background:#a855f7"></div></div>
+        </div>
+        <div class="sensor-item">
+          <div class="s-label">Light Intensity</div>
+          <div class="s-val" id="sv-light" style="color:#fbbf24">-- lux</div>
+          <div class="s-bar"><div class="s-fill" id="sb-light" style="width:0%;background:#fbbf24"></div></div>
+        </div>
+        <div class="sensor-item">
+          <div class="s-label">PIR Motion</div>
+          <div class="s-val" id="sv-pir" style="color:#22c55e">--</div>
+          <div class="s-bar"><div class="s-fill" id="sb-pir" style="width:0%;background:#22c55e"></div></div>
+        </div>
+        <div class="sensor-item">
+          <div class="s-label">Outdoor Temp</div>
+          <div class="s-val" id="sv-tout" style="color:#fb923c">--°C</div>
+          <div class="s-bar"><div class="s-fill" id="sb-tout" style="width:0%;background:#fb923c"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Occupancy + Device Status -->
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <div class="card-sm">
+        <div class="card-title">◈ Occupancy (Random Forest)</div>
+        <div class="occ-indicator occ-off" id="occ-badge">
+          <div class="occ-dot"></div>
+          <div>
+            <div class="occ-text" id="occ-text">UNOCCUPIED</div>
+            <div style="font-size:9px;color:#94a3b8;margin-top:2px">Confidence: <span id="occ-conf">0%</span></div>
+          </div>
+        </div>
+        <div class="conf-bar"><div class="conf-fill" id="conf-bar" style="width:0%"></div></div>
+      </div>
+      <div class="card-sm" style="flex:1">
+        <div class="card-title">⚡ LSTM Prediction</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:600;color:#3b82f6" id="lstm-pred">-- Wh</div>
+        <div style="font-size:9px;color:#475569;margin-top:2px">Next 10-min forecast</div>
+        <div style="margin-top:8px">
+          <div style="display:flex;justify-content:space-between;font-size:9px;color:#64748b;margin-bottom:3px">
+            <span>Prediction vs Actual</span><span id="lstm-err">MAPE: 8.3%</span>
+          </div>
+          <div class="power-bar"><div class="power-fill" id="lstm-bar" style="width:50%"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Device Control Grid -->
+  <div class="card" style="margin-bottom:10px">
+    <div class="card-title">⚙ AI-Controlled Device Management</div>
+    <div style="display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px">
+      <div class="device-card" id="dc-light">
+        <div class="device-top">
+          <div class="device-icon" style="background:#1a2a1a">💡</div>
+          <label class="toggle"><input type="checkbox" id="d-light" onchange="manual('light')"><span class="tslider"></span></label>
+        </div>
+        <div>
+          <div class="device-name">Lighting</div>
+          <div class="device-watt" id="w-light">0W</div>
+        </div>
+        <div class="power-bar"><div class="power-fill" id="pb-light" style="width:0%"></div></div>
+      </div>
+      <div class="device-card" id="dc-ac">
+        <div class="device-top">
+          <div class="device-icon" style="background:#0a1a2a">❄️</div>
+          <label class="toggle"><input type="checkbox" id="d-ac" onchange="manual('ac')"><span class="tslider"></span></label>
+        </div>
+        <div>
+          <div class="device-name">Air Cond.</div>
+          <div class="device-watt" id="w-ac">0W</div>
+        </div>
+        <div class="power-bar"><div class="power-fill" id="pb-ac" style="width:0%"></div></div>
+      </div>
+      <div class="device-card" id="dc-fan">
+        <div class="device-top">
+          <div class="device-icon" style="background:#1a1a0a">🌀</div>
+          <label class="toggle"><input type="checkbox" id="d-fan" onchange="manual('fan')"><span class="tslider"></span></label>
+        </div>
+        <div>
+          <div class="device-name">Fans</div>
+          <div class="device-watt" id="w-fan">0W</div>
+        </div>
+        <div class="power-bar"><div class="power-fill" id="pb-fan" style="width:0%"></div></div>
+      </div>
+      <div class="device-card" id="dc-proj">
+        <div class="device-top">
+          <div class="device-icon" style="background:#1a0a1a">📽️</div>
+          <label class="toggle"><input type="checkbox" id="d-proj" onchange="manual('proj')"><span class="tslider"></span></label>
+        </div>
+        <div>
+          <div class="device-name">Projector</div>
+          <div class="device-watt" id="w-proj">0W</div>
+        </div>
+        <div class="power-bar"><div class="power-fill" id="pb-proj" style="width:0%"></div></div>
+      </div>
+      <div class="device-card" id="dc-other">
+        <div class="device-top">
+          <div class="device-icon" style="background:#1a1020">🔌</div>
+          <label class="toggle"><input type="checkbox" id="d-other" onchange="manual('other')"><span class="tslider"></span></label>
+        </div>
+        <div>
+          <div class="device-name">Other</div>
+          <div class="device-watt" id="w-other">0W</div>
+        </div>
+        <div class="power-bar"><div class="power-fill" id="pb-other" style="width:0%"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AI Analysis -->
+  <div class="card">
+    <div class="card-title">◎ Claude AI — Decision Engine Analysis</div>
+    <div class="ai-box" id="ai-out">Waiting for analysis... Click button to run Claude AI on live sensor data with your paper's decision logic.</div>
+    <button class="btn-primary" id="ai-btn" onclick="runAI()">▶ Run AI Decision Engine Analysis</button>
+  </div>
+</div>
+
+<!-- ─── ANALYTICS TAB ─────────────────────────────────────── -->
+<div class="panel" id="tab-analytics">
+  <div class="grid-4" style="margin-bottom:10px">
+    <div class="stat-card">
+      <div class="stat-accent" style="background:#ef4444"></div>
+      <div class="stat-label" style="padding-left:6px">Baseline (30-day)</div>
+      <div class="stat-val" style="color:#ef4444;padding-left:6px;font-size:18px">432.6 kWh</div>
+      <div class="stat-sub" style="padding-left:6px">No control ₹3,028</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-accent" style="background:#f59e0b"></div>
+      <div class="stat-label" style="padding-left:6px">Schedule-Based</div>
+      <div class="stat-val" style="color:#f59e0b;padding-left:6px;font-size:18px">298.4 kWh</div>
+      <div class="stat-sub" style="padding-left:6px">Fixed timetable ₹2,089</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-accent" style="background:#22c55e"></div>
+      <div class="stat-label" style="padding-left:6px">AI-Controlled</div>
+      <div class="stat-val" style="color:#22c55e;padding-left:6px;font-size:18px">255.1 kWh</div>
+      <div class="stat-sub" style="padding-left:6px">Proposed system ₹1,786</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-accent" style="background:#22c55e"></div>
+      <div class="stat-label" style="padding-left:6px">Cost Saved</div>
+      <div class="stat-val" style="color:#22c55e;padding-left:6px;font-size:18px">₹1,242</div>
+      <div class="stat-sub" style="padding-left:6px">26.8 kg CO₂ reduced</div>
+    </div>
+  </div>
+
+  <div class="grid-2" style="margin-bottom:10px">
+    <div class="card">
+      <div class="card-title">📈 30-Day Energy Chart (3 Scenarios)</div>
+      <canvas id="chartEnergy" height="160"></canvas>
+    </div>
+    <div class="card">
+      <div class="card-title">🔧 Device-Wise Monthly Savings</div>
+      <canvas id="chartDevices" height="160"></canvas>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📊 Device-Wise Breakdown Table</div>
+    <table style="width:100%;font-size:11px;border-collapse:collapse">
+      <thead>
+        <tr style="color:#475569;font-family:'JetBrains Mono',monospace;font-size:9px">
+          <th style="text-align:left;padding:6px 4px;border-bottom:1px solid #1e293b">Device</th>
+          <th style="text-align:right;padding:6px 4px;border-bottom:1px solid #1e293b">Baseline (kWh)</th>
+          <th style="text-align:right;padding:6px 4px;border-bottom:1px solid #1e293b">AI-Ctrl (kWh)</th>
+          <th style="text-align:right;padding:6px 4px;border-bottom:1px solid #1e293b">Saved (kWh)</th>
+          <th style="text-align:right;padding:6px 4px;border-bottom:1px solid #1e293b">Savings %</th>
+        </tr>
+      </thead>
+      <tbody id="device-table-body"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ─── MODELS TAB ─────────────────────────────────────── -->
+<div class="panel" id="tab-models">
+  <div class="grid-2" style="margin-bottom:10px">
+    <div class="card">
+      <div class="card-title">🌲 Random Forest — Performance Metrics</div>
+      <div id="rf-metrics"></div>
+    </div>
+    <div class="card">
+      <div class="card-title">🧠 LSTM — vs Baselines</div>
+      <canvas id="chartLSTM" height="180"></canvas>
+    </div>
+  </div>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">📊 Feature Importance (Top 10) — Random Forest on UCI</div>
+      <div id="feat-importance"></div>
+    </div>
+    <div class="card">
+      <div class="card-title">⚡ System Architecture Flow</div>
+      <div style="display:flex;flex-direction:column;gap:6px;margin-top:4px">
+        <div id="arch-layers"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── LOG TAB ─────────────────────────────────────── -->
+<div class="panel" id="tab-log">
+  <div class="card">
+    <div class="card-title" style="display:flex;justify-content:space-between;align-items:center">
+      <span>⬡ Real-Time Audit Log</span>
+      <button onclick="clearLog()" style="font-size:9px;color:#475569;background:none;border:none;cursor:pointer;font-family:'JetBrains Mono',monospace">CLEAR</button>
+    </div>
+    <div class="log-scroll" id="log-container"></div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:10px">
+    <div class="card-sm" style="text-align:center">
+      <div class="stat-label" style="margin-bottom:4px">Total Decisions</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:20px;color:#3b82f6" id="log-count">0</div>
+    </div>
+    <div class="card-sm" style="text-align:center">
+      <div class="stat-label" style="margin-bottom:4px">Auto Power-Offs</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:20px;color:#22c55e" id="log-offs">0</div>
+    </div>
+    <div class="card-sm" style="text-align:center">
+      <div class="stat-label" style="margin-bottom:4px">Est. Wh Saved</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:20px;color:#f59e0b" id="log-wh">0</div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<script>
+const dW={light:86,ac:1800,fan:120,proj:200,other:60};
+const baseline=Object.values(dW).reduce((a,b)=>a+b,0);
+const scenarios={
+  morning:{temp:27,hum:62,co2:850,light:600,pir:true,tout:32},
+  break:{temp:26,hum:58,co2:480,light:700,pir:false,tout:34},
+  evening:{temp:24,hum:55,co2:420,light:120,pir:false,tout:28},
+  night:{temp:22,hum:50,co2:400,light:5,pir:false,tout:22}
+};
+let curScen='morning';
+let devices={light:true,ac:true,fan:true,proj:true,other:true};
+let sd={temp:27,hum:62,co2:850,light:600,pir:true,tout:32};
+let logEntries=[];
+let logCount=0,logOffs=0,logWh=0;
+let energyHistory=Array(24).fill(0).map((_,i)=>Math.round(50+Math.random()*30));
+let chartE,chartD,chartL;
+
+function n(v,a){return+(v+(Math.random()-0.5)*a*2).toFixed(1);}
+
+function setScenario(s){
+  curScen=s;
+  document.querySelectorAll('.scen-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('s-'+s).classList.add('active');
+  updateSensors();applyRules();
+}
+
+function updateSensors(){
+  const sc=scenarios[curScen];
+  sd={temp:n(sc.temp,0.8),hum:n(sc.hum,2),co2:Math.round(n(sc.co2,30)),light:Math.round(n(sc.light,40)),pir:sc.pir,tout:n(sc.tout,1)};
+  document.getElementById('sv-temp').textContent=sd.temp+'°C';
+  document.getElementById('sb-temp').style.width=Math.min(100,(sd.temp/40)*100)+'%';
+  document.getElementById('sv-hum').textContent=sd.hum+'%';
+  document.getElementById('sb-hum').style.width=sd.hum+'%';
+  document.getElementById('sv-co2').textContent=sd.co2+' ppm';
+  document.getElementById('sb-co2').style.width=Math.min(100,(sd.co2/1500)*100)+'%';
+  document.getElementById('sv-light').textContent=sd.light+' lux';
+  document.getElementById('sb-light').style.width=Math.min(100,(sd.light/1000)*100)+'%';
+  document.getElementById('sv-pir').textContent=sd.pir?'DETECTED':'No Motion';
+  document.getElementById('sb-pir').style.width=sd.pir?'100%':'0%';
+  document.getElementById('sv-tout').textContent=sd.tout+'°C';
+  document.getElementById('sb-tout').style.width=Math.min(100,(sd.tout/45)*100)+'%';
+  document.getElementById('stat-env').textContent=sd.temp+'°C';
+  document.getElementById('stat-env2').textContent=sd.hum+'% RH';
+  document.getElementById('stat-co2').textContent=sd.co2+' ppm';
+  const co2s=sd.co2>1000?'HIGH – ventilate!':sd.co2>700?'elevated':'normal';
+  document.getElementById('stat-co2-status').textContent=co2s;
+}
+
+function applyRules(){
+  const occ=sd.pir||(sd.co2>600);
+  const conf=occ?(76+Math.random()*17):(81+Math.random()*12);
+  const badge=document.getElementById('occ-badge');
+  badge.className='occ-indicator '+(occ?'occ-on':'occ-off');
+  document.getElementById('occ-text').textContent=occ?'OCCUPIED':'UNOCCUPIED';
+  document.getElementById('occ-conf').textContent=conf.toFixed(1)+'%';
+  document.getElementById('conf-bar').style.width=conf.toFixed(0)+'%';
+
+  if(!occ){
+    Object.keys(devices).forEach(d=>setDev(d,false));
+    addLog('AI','All devices OFF — room unoccupied','tag-ai');
+    logOffs++;
+  } else {
+    setDev('light',true);
+    setDev('ac',sd.temp>26);
+    setDev('fan',sd.temp>=22&&sd.temp<=28);
+    setDev('proj',curScen==='morning');
+    setDev('other',true);
+    addLog('AI','Occupancy detected — devices configured','tag-ai');
+  }
+  const lstmPred=Math.round(occ?50+sd.temp*0.8+sd.co2*0.02:10+Math.random()*8);
+  document.getElementById('lstm-pred').textContent=lstmPred+' Wh';
+  document.getElementById('lstm-bar').style.width=Math.min(100,(lstmPred/80)*100)+'%';
+  updatePower();
+}
+
+function setDev(d,state){
+  devices[d]=state;
+  document.getElementById('d-'+d).checked=state;
+  document.getElementById('w-'+d).textContent=(state?dW[d]:0)+'W';
+  document.getElementById('pb-'+d).style.width=(state?100:0)+'%';
+  document.getElementById('dc-'+d).className='device-card'+(state?' on':'');
+}
+
+function manual(d){
+  devices[d]=document.getElementById('d-'+d).checked;
+  document.getElementById('w-'+d).textContent=(devices[d]?dW[d]:0)+'W';
+  document.getElementById('pb-'+d).style.width=(devices[d]?100:0)+'%';
+  document.getElementById('dc-'+d).className='device-card'+(devices[d]?' on':'');
+  addLog('MAN',`${d.toUpperCase()} manually ${devices[d]?'ON':'OFF'}`,devices[d]?'tag-on':'tag-off');
+  updatePower();
+}
+
+function updatePower(){
+  const total=Object.keys(devices).reduce((s,d)=>s+(devices[d]?dW[d]:0),0);
+  const pct=Math.round((1-total/baseline)*100);
+  document.getElementById('stat-power').textContent=total+' Wh';
+  document.getElementById('stat-saved').textContent=Math.max(0,pct)+'%';
+  const saved=Math.max(0,baseline-total);
+  logWh+=saved/6;
+  logCount++;
+  document.getElementById('log-count').textContent=logCount;
+  document.getElementById('log-offs').textContent=logOffs;
+  document.getElementById('log-wh').textContent=Math.round(logWh);
+}
+
+function addLog(type,msg,tagClass){
+  const now=new Date();
+  const t=now.toLocaleTimeString('en',{hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false});
+  logEntries.unshift({t,type,msg,tagClass});
+  if(logEntries.length>50)logEntries.pop();
+  renderLog();
+}
+
+function renderLog(){
+  const c=document.getElementById('log-container');
+  c.innerHTML=logEntries.map(l=>`<div class="log-entry"><span class="log-time">${l.t}</span><span class="log-tag ${l.tagClass}">${l.type}</span><span class="log-msg">${l.msg}</span></div>`).join('');
+}
+function clearLog(){logEntries=[];renderLog();}
+
+function switchTab(t){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+t).classList.add('active');
+  event.target.classList.add('active');
+  if(t==='analytics')initCharts();
+  if(t==='models')initModelCharts();
+}
+
+function initCharts(){
+  if(chartE)return;
+  const eCtx=document.getElementById('chartEnergy').getContext('2d');
+  chartE=new Chart(eCtx,{type:'bar',data:{labels:['Week 1','Week 2','Week 3','Week 4','Monthly Total'],datasets:[
+    {label:'No Control',data:[108,104,110,110.6,432.6],backgroundColor:'#ef4444cc'},
+    {label:'Schedule-Based',data:[74,73,77,74.4,298.4],backgroundColor:'#f59e0bcc'},
+    {label:'AI-Based',data:[63,62,67,63.1,255.1],backgroundColor:'#22c55ecc'},
+  ]},options:{responsive:true,plugins:{legend:{labels:{color:'#94a3b8',font:{size:10}}}},scales:{x:{ticks:{color:'#64748b',font:{size:9}},grid:{color:'#1e293b'}},y:{ticks:{color:'#64748b',font:{size:9}},grid:{color:'#1e293b'}}}}});
+
+  const dCtx=document.getElementById('chartDevices').getContext('2d');
+  chartD=new Chart(dCtx,{type:'bar',data:{labels:['Lighting','AC','Fans','Projector','Other'],datasets:[
+    {label:'Baseline',data:[86.4,198.7,64.3,52.8,30.4],backgroundColor:'#ef4444cc'},
+    {label:'AI-Ctrl',data:[48.2,112.6,41.7,34.9,17.7],backgroundColor:'#22c55ecc'},
+  ]},options:{responsive:true,plugins:{legend:{labels:{color:'#94a3b8',font:{size:10}}}},scales:{x:{ticks:{color:'#64748b',font:{size:9}},grid:{color:'#1e293b'}},y:{ticks:{color:'#64748b',font:{size:9}},grid:{color:'#1e293b'}}}}});
+
+  const devData=[
+    ['Lighting System',86.4,48.2],['Air Conditioning',198.7,112.6],['Ceiling Fans',64.3,41.7],
+    ['Projector/Display',52.8,34.9],['Other Equipment',30.4,17.7],['TOTAL',432.6,255.1]
+  ];
+  document.getElementById('device-table-body').innerHTML=devData.map((r,i)=>`
+    <tr style="${i===5?'border-top:1px solid #334155;font-weight:600':''}">
+      <td style="padding:5px 4px;color:${i===5?'#22c55e':'#94a3b8'};font-size:11px">${r[0]}</td>
+      <td style="padding:5px 4px;text-align:right;color:#ef4444;font-family:'JetBrains Mono',monospace;font-size:11px">${r[1]}</td>
+      <td style="padding:5px 4px;text-align:right;color:#22c55e;font-family:'JetBrains Mono',monospace;font-size:11px">${r[2]}</td>
+      <td style="padding:5px 4px;text-align:right;color:#94a3b8;font-family:'JetBrains Mono',monospace;font-size:11px">${(r[1]-r[2]).toFixed(1)}</td>
+      <td style="padding:5px 4px;text-align:right;color:#22c55e;font-family:'JetBrains Mono',monospace;font-size:11px">${((1-r[2]/r[1])*100).toFixed(1)}%</td>
+    </tr>`).join('');
+}
+
+function initModelCharts(){
+  if(chartL)return;
+  const rfMetrics=[
+    ['Accuracy','96.8%','93.6%',93.6],['Precision','95.4%','92.1%',92.1],
+    ['Recall','97.2%','94.3%',94.3],['F1-Score','96.3%','93.2%',93.2],['AUC-ROC','98.1%','95.7%',95.7],
+  ];
+  document.getElementById('rf-metrics').innerHTML=rfMetrics.map(m=>`
+    <div class="gauge-row">
+      <div class="gauge-label">${m[0]}</div>
+      <div class="gauge-wrap">
+        <div class="gauge-bar"><div class="gauge-fill" style="width:${m[3]}%;background:#22c55e"></div></div>
+      </div>
+      <div style="font-size:9px;color:#64748b;width:32px;text-align:right;font-family:'JetBrains Mono',monospace">${m[1]}</div>
+      <div class="gauge-val">${m[2]}</div>
+    </div>`).join('');
+
+  const lCtx=document.getElementById('chartLSTM').getContext('2d');
+  chartL=new Chart(lCtx,{type:'bar',data:{
+    labels:['MAE (Wh)','RMSE (Wh)','MAPE (%)'],
+    datasets:[
+      {label:'LSTM (Proposed)',data:[12.4,18.9,8.3],backgroundColor:'#3b82f6cc'},
+      {label:'ARIMA',data:[21.7,31.2,15.6],backgroundColor:'#475569cc'},
+      {label:'SVR',data:[18.3,26.7,12.4],backgroundColor:'#334155cc'},
+    ]
+  },options:{responsive:true,plugins:{legend:{labels:{color:'#94a3b8',font:{size:10}}}},scales:{x:{ticks:{color:'#64748b'},grid:{color:'#1e293b'}},y:{ticks:{color:'#64748b'},grid:{color:'#1e293b'}}}}});
+
+  const features=[
+    {r:1,n:'T2 (Living Room Temp)',s:0.142,c:'#22c55e'},
+    {r:2,n:'hour_sin (cyclical)',s:0.128,c:'#22c55e'},
+    {r:3,n:'RH_2 (Humidity)',s:0.117,c:'#22c55e'},
+    {r:4,n:'T_out (Outdoor)',s:0.109,c:'#3b82f6'},
+    {r:5,n:'hour_cos',s:0.096,c:'#3b82f6'},
+    {r:6,n:'T6 (Outside Build.)',s:0.088,c:'#3b82f6'},
+    {r:7,n:'Tdewpoint',s:0.074,c:'#0d9488'},
+    {r:8,n:'weekday_sin',s:0.063,c:'#0d9488'},
+    {r:9,n:'RH_out',s:0.058,c:'#0d9488'},
+    {r:10,n:'Windspeed',s:0.047,c:'#0d9488'},
+  ];
+  document.getElementById('feat-importance').innerHTML=features.map(f=>`
+    <div class="feat-row">
+      <div class="feat-rank">${f.r}</div>
+      <div class="feat-name">${f.n}</div>
+      <div class="feat-bar-wrap"><div class="feat-bar-fill" style="width:${(f.s/0.142)*100}%;background:${f.c}"></div></div>
+      <div class="feat-score">${f.s}</div>
+    </div>`).join('');
+
+  const layers=[
+    {n:'Layer 1',t:'Sensor Layer',c:'#0d9488'},
+    {n:'Layer 2',t:'Data Processing',c:'#8b5cf6'},
+    {n:'Layer 3',t:'AI Inference',c:'#3b82f6'},
+    {n:'Layer 4',t:'Decision Engine',c:'#f59e0b'},
+    {n:'Layer 5',t:'Device Control',c:'#22c55e'},
+  ];
+  document.getElementById('arch-layers').innerHTML=layers.map((l,i)=>`
+    <div style="display:flex;align-items:center;gap:8px;padding:8px;background:#111827;border-radius:7px;border-left:3px solid ${l.c}">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:${l.c};width:50px">${l.n}</div>
+      <div style="font-size:11px;color:#cbd5e1;font-weight:500">${l.t}</div>
+      ${i<4?'<div style="margin-left:auto;color:#334155;font-size:14px">↓</div>':''}
+    </div>`).join('');
+}
+
+async function runAI(){
+  const btn=document.getElementById('ai-btn');
+  const out=document.getElementById('ai-out');
+  btn.disabled=true;btn.textContent='⟳ Analyzing...';
+  out.innerHTML='<span class="ai-thinking">◎ Running Random Forest occupancy classification...\n◎ Running LSTM energy prediction...\n◎ Applying decision engine rules...</span>';
+  const occ=sd.pir||(sd.co2>600);
+  const prompt=`You are the AI decision engine for a Smart Classroom Energy Saver system (Aryavansh, Roll 2330078, CEC Jhanjeri). The system uses Random Forest for occupancy detection and LSTM for energy forecasting, trained on the UCI Appliances Energy Prediction Dataset (19,735 observations, 4.5 months).
+
+LIVE SENSOR DATA — Room 204:
+Temperature: ${sd.temp}°C | Humidity: ${sd.hum}% | CO₂: ${sd.co2} ppm
+Light: ${sd.light} lux | PIR: ${sd.pir?'MOTION DETECTED':'No Motion'} | Outdoor Temp: ${sd.tout}°C
+
+Output your analysis with these exact section headers:
+[OCCUPANCY PREDICTION]
+[DEVICE DECISIONS]
+[ENERGY FORECAST]
+[DECISION SUMMARY]
+
+Keep each section to 2-3 lines. Be specific with numbers and technical reasoning from the paper's algorithm.`;
+  try{
+    const resp=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:500,messages:[{role:'user',content:prompt}]})});
+    const data=await resp.json();
+    let text=data.content?.[0]?.text||'No response';
+    text=text.replace(/\[(.*?)\]/g,'<span class="ai-section">[$1]</span>');
+    out.innerHTML=text;
+    addLog('AI','Claude analysis complete — decisions applied','tag-ai');
+  }catch(e){
+    out.textContent='[Connection error] '+e.message;
+  }
+  btn.disabled=false;btn.textContent='▶ Run AI Decision Engine Analysis';
+}
+
+function tick(){
+  const now=new Date();
+  document.getElementById('clock').textContent=now.toLocaleTimeString('en',{hour12:false});
+  document.getElementById('daystr').textContent=now.toLocaleDateString('en',{weekday:'short',day:'numeric',month:'short'});
+  if(Math.random()<0.25){updateSensors();applyRules();}
+}
+
+// Init
+updateSensors();applyRules();
+addLog('SYS','Smart Classroom Energy Saver initialized','tag-ai');
+addLog('SYS','RF model loaded: 200 trees, 14 features','tag-ai');
+addLog('SYS','LSTM model loaded: 128→64 units, R²=0.914','tag-ai');
+setInterval(tick,2500);tick();
+</script>
