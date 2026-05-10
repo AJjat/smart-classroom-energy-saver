@@ -1,0 +1,44 @@
+# OS Files
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# Editor Files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+.atom/
+
+# Node modules (if using npm)
+node_modules/
+package-lock.json
+yarn.lock
+
+# Build artifacts
+dist/
+build/
+*.log
+npm-debug.log*
+yarn-debug.log*
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# IDE
+*.iml
+*.suo
+*.user
+
+# OS
+.DS_Store
+ehthumbs.db
+
+# Temp files
+*.tmp
+*.bak
+*.backup
